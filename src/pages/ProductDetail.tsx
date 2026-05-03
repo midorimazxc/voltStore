@@ -222,16 +222,12 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
 
           <ReviewList reviews={reviews} loading={reviewsLoading} />
 
-          <div className="mt-8">
+        <div className="mt-8">
             {user ? (
-              userReview ? (
-                <p className="text-sm text-slate-400">Вы уже оставили отзыв на этот товар.</p>
-              ) : (
-                <>
-                  <h3 className="text-sm font-bold text-slate-900 mb-3">Оставить отзыв</h3>
-                  <ReviewForm onSubmit={addReview} />
-                </>
-              )
+              <>
+                <h3 className="text-sm font-bold text-slate-900 mb-3">Оставить отзыв</h3>
+                <ReviewForm onSubmit={addReview} />
+              </>
             ) : (
               <p className="text-sm text-slate-400">
                 <button

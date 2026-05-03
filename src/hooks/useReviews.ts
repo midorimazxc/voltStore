@@ -26,7 +26,6 @@ export function useReviews(productId: string) {
     if (user) {
       setUserReview(list.find((r) => r.user_id === user.id) ?? null);
     }
-
     setLoading(false);
   }
 

@@ -4,6 +4,9 @@ import { useNavigation } from '../context/NavigationContext';
 import { useProduct } from '../hooks/useProducts';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useReviews } from '../hooks/useReviews';
+import ReviewList from '../components/products/reviews/ReviewList';
+import ReviewForm from '../components/products/reviews/ReviewForm';
 
 interface ProductDetailProps {
   productId: string;
@@ -15,6 +18,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
   const { product, loading } = useProduct(productId);
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const { reviews, loading: reviewsLoading, userReview, addReview } = useReviews(productId);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -202,6 +206,46 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
             </div>
           </div>
         </div>
+
+        {/* ── ОТЗЫВЫ ── */}
+        <div className="mt-16 max-w-2xl">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-black text-slate-900">
+              Отзывы
+              {reviews.length > 0 && (
+                <span className="ml-2 text-base font-semibold text-slate-400">
+                  ({reviews.length})
+                </span>
+              )}
+            </h2>
+          </div>
+
+          <ReviewList reviews={reviews} loading={reviewsLoading} />
+
+          <div className="mt-8">
+            {user ? (
+              userReview ? (
+                <p className="text-sm text-slate-400">Вы уже оставили отзыв на этот товар.</p>
+              ) : (
+                <>
+                  <h3 className="text-sm font-bold text-slate-900 mb-3">Оставить отзыв</h3>
+                  <ReviewForm onSubmit={addReview} />
+                </>
+              )
+            ) : (
+              <p className="text-sm text-slate-400">
+                <button
+                  onClick={onAuthRequired}
+                  className="text-cyan-600 font-semibold hover:underline"
+                >
+                  Войдите
+                </button>
+                , чтобы оставить отзыв.
+              </p>
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   );

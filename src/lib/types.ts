@@ -32,6 +32,18 @@ export interface Profile {
   zip_code: string;
 }
 
+export interface Review {
+  id: string;
+  product_id: string;
+  user_id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  profiles?: {
+    full_name: string;
+  };
+}
+
 export interface CartItem {
   id: string;
   user_id: string;

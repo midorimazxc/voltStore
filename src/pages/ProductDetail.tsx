@@ -139,7 +139,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
             <div className="mt-6">
               <h3 className="text-sm font-bold text-slate-900 mb-3">Specifications</h3>
               <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                {Object.entries(product.specs).map(([key, value], i) => (
+                {product.specs && Object.entries(product.specs).map(([key, value], i) => (
                   <div
                     key={key}
                     className={`flex gap-4 px-4 py-3 text-sm ${i % 2 === 0 ? 'bg-slate-50' : 'bg-white'}`}

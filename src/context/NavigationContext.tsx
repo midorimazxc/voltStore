@@ -5,6 +5,7 @@ interface NavigationState {
   page: Page;
   productId: string | null;
   orderId: string | null;
+  categoryId: string | null; // 👈
 }
 
 interface NavigationContextType {
@@ -19,13 +20,15 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     page: 'home',
     productId: null,
     orderId: null,
+    categoryId: null, // 👈
   });
 
-  const navigate = (page: Page, params?: { productId?: string; orderId?: string }) => {
+  const navigate: (page: Page, params?: { productId?: string; orderId?: string; categoryId?: string }) => void = (page, params) => {
     setNav({
       page,
       productId: params?.productId ?? null,
       orderId: params?.orderId ?? null,
+      categoryId: params?.categoryId ?? null, // 👈
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

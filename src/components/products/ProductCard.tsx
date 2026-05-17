@@ -38,7 +38,7 @@ export default function ProductCard({ product, onAuthRequired }: ProductCardProp
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           <span className="flex items-center gap-1 bg-cyan-500 text-slate-900 text-xs font-bold px-2 py-1 rounded-full">
             <Zap className="w-3 h-3" />
-            Instant Delivery
+            Моментальная доставка
           </span>
           {discount && (
             <span className="bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-full">

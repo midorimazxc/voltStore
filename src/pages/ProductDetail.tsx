@@ -1,4 +1,4 @@
-import { ArrowLeft, ShoppingCart, Star, Zap, Clock, Shield, RotateCcw, Plus, Minus } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Star, Zap, Shield, RotateCcw, Plus, Minus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigation } from '../context/NavigationContext';
 import { useProduct } from '../hooks/useProducts';
@@ -18,7 +18,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
   const { product, loading } = useProduct(productId);
   const { addToCart } = useCart();
   const { user } = useAuth();
-  const { reviews, loading: reviewsLoading, userReview, addReview } = useReviews(productId);
+  const { reviews, loading: reviewsLoading, addReview } = useReviews(productId);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
@@ -56,9 +56,9 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
     return (
       <div className="min-h-screen bg-gray-50 pt-16 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-600 text-lg">Product not found.</p>
+          <p className="text-slate-600 text-lg">Товар не найден.</p>
           <button onClick={() => navigate('products')} className="mt-4 text-cyan-600 hover:underline">
-            Back to Products
+            Назад к товарам
           </button>
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-medium mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Products
+          Назад к товарам
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -109,7 +109,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                 ))}
               </div>
               <span className="text-slate-600 text-sm font-medium">{product.rating}</span>
-              <span className="text-slate-400 text-sm">({product.review_count.toLocaleString()} reviews)</span>
+              <span className="text-slate-400 text-sm">({product.review_count.toLocaleString()} отзывов)</span>
             </div>
 
             <div className="flex items-center gap-3 mt-5">
@@ -118,7 +118,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                 <>
                   <span className="text-xl text-slate-400 line-through">${product.original_price.toFixed(2)}</span>
                   <span className="bg-rose-100 text-rose-600 text-sm font-bold px-2.5 py-1 rounded-lg">
-                    Save {discount}%
+                    Скидка {discount}%
                   </span>
                 </>
               )}
@@ -127,32 +127,17 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
             <div className="mt-5 p-4 bg-cyan-50 border border-cyan-200 rounded-xl">
               <div className="flex items-center gap-2 text-cyan-700 font-semibold text-sm">
                 <Zap className="w-4 h-4" />
-                Instant Delivery Available
+                Мгновенная выдача ключа
               </div>
               <p className="text-cyan-600 text-sm mt-1">
-                Order now and receive this item in <strong>2–4 hours</strong>. Available for an extra $14.99.
+                Ключ активации будет выдан <strong>сразу после оплаты</strong>.
               </p>
             </div>
 
             <p className="text-slate-600 mt-5 leading-relaxed text-sm">{product.description}</p>
 
-            <div className="mt-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-3">Specifications</h3>
-              <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                {product.specs && Object.entries(product.specs).map(([key, value], i) => (
-                  <div
-                    key={key}
-                    className={`flex gap-4 px-4 py-3 text-sm ${i % 2 === 0 ? 'bg-slate-50' : 'bg-white'}`}
-                  >
-                    <span className="font-semibold text-slate-700 w-32 flex-shrink-0">{key}</span>
-                    <span className="text-slate-600">{value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             <div className="mt-6 flex items-center gap-4">
-              <span className="text-sm font-semibold text-slate-700">Quantity</span>
+              <span className="text-sm font-semibold text-slate-700">Количество</span>
               <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-1">
                 <button
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
@@ -162,13 +147,12 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                 </button>
                 <span className="w-8 text-center font-bold text-slate-900">{quantity}</span>
                 <button
-                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
+                  onClick={() => setQuantity(q => q + 1)}
                   className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
-              <span className="text-xs text-slate-400">{product.stock} in stock</span>
             </div>
 
             <div className="flex gap-3 mt-6">
@@ -181,22 +165,22 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                 }`}
               >
                 <ShoppingCart className="w-5 h-5" />
-                {added ? 'Added!' : 'Add to Cart'}
+                {added ? 'Добавлено!' : 'В корзину'}
               </button>
               <button
                 onClick={handleBuyNow}
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold rounded-xl transition-all"
               >
                 <Zap className="w-5 h-5" />
-                Buy Now
+                Купить сейчас
               </button>
             </div>
 
             <div className="flex gap-4 mt-5">
               {[
-                { icon: <Clock className="w-4 h-4 text-cyan-500" />, text: '2–4 hr instant delivery' },
-                { icon: <Shield className="w-4 h-4 text-green-500" />, text: '2-year warranty' },
-                { icon: <RotateCcw className="w-4 h-4 text-blue-500" />, text: '30-day returns' },
+                { icon: <Zap className="w-4 h-4 text-cyan-500" />, text: 'Мгновенная выдача' },
+                { icon: <Shield className="w-4 h-4 text-green-500" />, text: 'Гарантия качества' },
+                { icon: <RotateCcw className="w-4 h-4 text-blue-500" />, text: 'Возврат за 30 дней' },
               ].map(item => (
                 <div key={item.text} className="flex items-center gap-1.5 text-xs text-slate-500">
                   {item.icon}
@@ -207,7 +191,6 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
           </div>
         </div>
 
-        {/* ── ОТЗЫВЫ ── */}
         <div className="mt-16 max-w-2xl">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-black text-slate-900">
@@ -222,7 +205,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
 
           <ReviewList reviews={reviews} loading={reviewsLoading} />
 
-        <div className="mt-8">
+          <div className="mt-8">
             {user ? (
               <>
                 <h3 className="text-sm font-bold text-slate-900 mb-3">Оставить отзыв</h3>
@@ -241,7 +224,6 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

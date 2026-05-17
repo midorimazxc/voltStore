@@ -16,7 +16,7 @@ export function useOrders() {
     }
     supabase
       .from('orders')
-      .select('*, order_items(*)')
+      .select('*, order_items(*), license_keys(*)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .then(({ data }) => {
@@ -36,7 +36,7 @@ export function useOrder(id: string | null) {
     if (!id) return;
     supabase
       .from('orders')
-      .select('*, order_items(*)')
+      .select('*, order_items(*), license_keys(*)')
       .eq('id', id)
       .maybeSingle()
       .then(({ data }) => {

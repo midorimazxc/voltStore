@@ -1,25 +1,41 @@
-import { ArrowLeft, Zap, Truck, Package, Clock, CheckCircle2, XCircle, MapPin } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, CheckCircle2, XCircle, Copy, Check, KeyRound } from 'lucide-react';
 import { useNavigation } from '../context/NavigationContext';
 import { useOrder } from '../hooks/useOrders';
-import { OrderStatus, DeliveryType } from '../lib/types';
-
-const STEPS: { status: OrderStatus; label: string }[] = [
-  { status: 'confirmed', label: 'Order Confirmed' },
-  { status: 'preparing', label: 'Preparing' },
-  { status: 'out_for_delivery', label: 'Out for Delivery' },
-  { status: 'delivered', label: 'Delivered' },
-];
-
-const STATUS_ORDER: OrderStatus[] = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered'];
-
-const DELIVERY_ICONS: Record<DeliveryType, React.ReactNode> = {
-  instant: <Zap className="w-4 h-4 text-cyan-500" />,
-  express: <Truck className="w-4 h-4 text-blue-500" />,
-  standard: <Package className="w-4 h-4 text-slate-500" />,
-};
+import { LicenseKey } from '../lib/types';
 
 interface OrderDetailProps {
   orderId: string;
+}
+
+function KeyCard({ licenseKey }: { licenseKey: LicenseKey }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(licenseKey.key);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-slate-900 rounded-xl p-4 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-3 min-w-0">
+        <KeyRound className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+        <code className="text-cyan-300 text-sm font-mono tracking-wider truncate">
+          {licenseKey.key}
+        </code>
+      </div>
+      <button
+        onClick={handleCopy}
+        className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors flex-shrink-0"
+      >
+        {copied
+          ? <><Check className="w-3.5 h-3.5 text-green-400" /> Скопировано</>
+          : <><Copy className="w-3.5 h-3.5" /> Копировать</>
+        }
+      </button>
+    </div>
+  );
 }
 
 export default function OrderDetail({ orderId }: OrderDetailProps) {
@@ -40,93 +56,50 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
     return (
       <div className="min-h-screen bg-gray-50 pt-16 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-600">Order not found.</p>
-          <button onClick={() => navigate('orders')} className="mt-4 text-cyan-600 hover:underline text-sm">
-            Back to Orders
+          <p className="text-slate-600">Заказ не найден.</p>
+          <button
+            onClick={() => navigate('orders')}
+            className="mt-4 text-cyan-600 hover:underline text-sm"
+          >
+            Назад к заказам
           </button>
         </div>
       </div>
     );
   }
 
-  const currentStepIndex = STATUS_ORDER.indexOf(order.status);
   const isCancelled = order.status === 'cancelled';
-
-  const eta = order.estimated_delivery
-    ? new Date(order.estimated_delivery).toLocaleString('en-US', {
-        weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
-      })
-    : null;
+  const isPaid = order.status === 'paid';
+  const hasKeys = order.license_keys && order.license_keys.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
         <button
           onClick={() => navigate('orders')}
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-medium mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Orders
+          Назад к заказам
         </button>
 
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-black text-slate-900">
-              Order #{order.id.slice(0, 8).toUpperCase()}
-            </h1>
-            <p className="text-slate-400 text-sm mt-1">
-              Placed on {new Date(order.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5 text-sm font-semibold">
-            {DELIVERY_ICONS[order.delivery_type]}
-            <span className="text-slate-700 capitalize">{order.delivery_type} Delivery</span>
-          </div>
+        <div className="mb-6">
+          <h1 className="text-2xl font-black text-slate-900">
+            Заказ #{order.id.slice(0, 8).toUpperCase()}
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">
+            {new Date(order.created_at).toLocaleDateString('ru-RU', {
+              month: 'long', day: 'numeric', year: 'numeric'
+            })}
+          </p>
         </div>
 
-        {order.delivery_type === 'instant' && !isCancelled && (
-          <div className="bg-cyan-50 border border-cyan-200 rounded-2xl p-5 mb-6">
-            <div className="flex items-center gap-2 text-cyan-700 font-bold text-sm mb-1">
-              <Zap className="w-4 h-4" />
-              Instant Delivery Active
-            </div>
-            {eta && <p className="text-cyan-600 text-sm">Estimated arrival: <strong>{eta}</strong></p>}
-          </div>
-        )}
-
-        {!isCancelled && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-            <h2 className="text-base font-bold text-slate-900 mb-5">Delivery Progress</h2>
-            <div className="relative">
-              <div className="absolute left-5 top-5 bottom-5 w-0.5 bg-slate-100" />
-              <div className="space-y-5">
-                {STEPS.map((step, i) => {
-                  const stepIndex = STATUS_ORDER.indexOf(step.status);
-                  const isComplete = currentStepIndex >= stepIndex;
-                  const isCurrent = currentStepIndex === stepIndex;
-                  return (
-                    <div key={step.status} className="relative flex items-start gap-4 pl-10">
-                      <div className={`absolute left-0 w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
-                        isComplete
-                          ? 'bg-cyan-500 border-cyan-500'
-                          : 'bg-white border-slate-200'
-                      }`}>
-                        {isComplete
-                          ? <CheckCircle2 className="w-5 h-5 text-white" />
-                          : <span className="text-xs font-bold text-slate-400">{i + 1}</span>
-                        }
-                      </div>
-                      <div className="pt-2">
-                        <p className={`text-sm font-bold ${isComplete ? 'text-slate-900' : 'text-slate-400'}`}>
-                          {step.label}
-                        </p>
-                        {isCurrent && <p className="text-xs text-cyan-600 font-medium mt-0.5">Current status</p>}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+        {/* Статус */}
+        {isPaid && !hasKeys && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
+            <p className="text-amber-700 font-bold text-sm">Оплата получена</p>
+            <p className="text-amber-600 text-xs mt-0.5">Ключи формируются, обновите страницу через несколько секунд.</p>
           </div>
         )}
 
@@ -134,14 +107,33 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
           <div className="bg-rose-50 border border-rose-200 rounded-2xl p-5 mb-6 flex items-center gap-3">
             <XCircle className="w-6 h-6 text-rose-500 flex-shrink-0" />
             <div>
-              <p className="text-rose-700 font-bold text-sm">Order Cancelled</p>
-              <p className="text-rose-500 text-xs mt-0.5">This order has been cancelled.</p>
+              <p className="text-rose-700 font-bold text-sm">Заказ отменён</p>
+              <p className="text-rose-500 text-xs mt-0.5">Средства будут возвращены в течение 3–5 дней.</p>
             </div>
           </div>
         )}
 
+        {/* Блок с ключами */}
+        {hasKeys && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle2 className="w-5 h-5 text-green-500" />
+              <h2 className="text-base font-bold text-slate-900">Ваши ключи активации</h2>
+            </div>
+            <p className="text-slate-500 text-sm mb-4">
+              Сохраните ключи в надёжном месте. Они также доступны в вашем профиле.
+            </p>
+            <div className="space-y-3">
+              {order.license_keys!.map(lk => (
+                <KeyCard key={lk.id} licenseKey={lk} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Товары */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-          <h2 className="text-base font-bold text-slate-900 mb-4">Items Ordered</h2>
+          <h2 className="text-base font-bold text-slate-900 mb-4">Товары</h2>
           <div className="divide-y divide-slate-100">
             {order.order_items?.map(item => (
               <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
@@ -150,7 +142,7 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
                 </div>
                 <div className="flex-1">
                   <p className="text-slate-900 text-sm font-semibold leading-tight">{item.product_name}</p>
-                  <p className="text-slate-400 text-xs mt-0.5">Qty: {item.quantity}</p>
+                  <p className="text-slate-400 text-xs mt-0.5">Кол-во: {item.quantity}</p>
                 </div>
                 <span className="text-slate-900 font-bold text-sm">
                   ${(item.price * item.quantity).toFixed(2)}
@@ -160,36 +152,30 @@ export default function OrderDetail({ orderId }: OrderDetailProps) {
           </div>
           <div className="border-t border-slate-100 pt-4 mt-2 space-y-2">
             <div className="flex justify-between text-sm text-slate-600">
-              <span>Subtotal</span>
+              <span>Подытог</span>
               <span>${order.subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm text-slate-600">
-              <span>Delivery</span>
-              <span>{order.delivery_fee === 0 ? 'Free' : `$${order.delivery_fee.toFixed(2)}`}</span>
+              <span>Комиссия</span>
+              <span>{order.processing_fee === 0 ? 'Бесплатно' : `$${order.processing_fee.toFixed(2)}`}</span>
             </div>
             <div className="flex justify-between font-black text-slate-900 text-base pt-2 border-t border-slate-100">
-              <span>Total</span>
+              <span>Итого</span>
               <span>${order.total.toFixed(2)}</span>
             </div>
           </div>
         </div>
 
+        {/* Контакты */}
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-slate-500" />
-            Delivery Address
-          </h2>
+          <h2 className="text-base font-bold text-slate-900 mb-3">Контактные данные</h2>
           <p className="text-slate-700 font-semibold text-sm">{order.customer_name}</p>
-          <p className="text-slate-500 text-sm mt-0.5">{order.delivery_address}</p>
-          <p className="text-slate-500 text-sm">{order.delivery_city}, {order.delivery_zip}</p>
-          {order.customer_phone && <p className="text-slate-400 text-sm mt-1">{order.customer_phone}</p>}
-          {eta && order.delivery_type !== 'instant' && (
-            <div className="mt-4 flex items-center gap-2 text-slate-500 text-xs">
-              <Clock className="w-3.5 h-3.5" />
-              Estimated delivery: {eta}
-            </div>
+          <p className="text-slate-500 text-sm">{order.customer_email}</p>
+          {order.customer_phone && (
+            <p className="text-slate-400 text-sm mt-0.5">{order.customer_phone}</p>
           )}
         </div>
+
       </div>
     </div>
   );

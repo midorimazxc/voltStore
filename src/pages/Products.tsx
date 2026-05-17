@@ -18,10 +18,10 @@ interface ProductsProps {
 }
 
 const SORT_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Best Rated' },
+  { value: 'featured', label: 'Популярные' },
+  { value: 'price-asc', label: 'Цена: по возрастанию' },
+  { value: 'price-desc', label: 'Цена: по убыванию' },
+  { value: 'rating', label: 'По рейтингу' },
 ];
 
 export default function Products({ onAuthRequired }: ProductsProps) {
@@ -48,7 +48,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
     <div className="min-h-screen bg-gray-50 pt-16">
       <div className="bg-slate-900 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-black text-white mb-6">All Products</h1>
+          <h1 className="text-3xl font-black text-white mb-6">Все товары</h1>
           <form onSubmit={handleSearch} className="flex gap-3 max-w-xl">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -56,7 +56,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
                 type="text"
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                placeholder="Search products..."
+                placeholder="Поиск товаров..."
                 className="w-full pl-10 pr-4 py-3 bg-slate-800 border border-slate-700 text-white placeholder-slate-400 rounded-xl focus:outline-none focus:border-cyan-500 transition-colors text-sm"
               />
               {searchInput && (
@@ -73,7 +73,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
               type="submit"
               className="px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded-xl transition-colors text-sm"
             >
-              Search
+              Найти
             </button>
           </form>
         </div>
@@ -90,7 +90,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
                   : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
               }`}
             >
-              All
+              Все
             </button>
             {categories.map(cat => (
               <button
@@ -123,7 +123,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-slate-500">
-            {loading ? 'Loading...' : `${sortedProducts.length} products found`}
+            {loading ? 'Загрузка...' : `Найдено товаров: ${sortedProducts.length}`}
           </p>
         </div>
 
@@ -135,12 +135,12 @@ export default function Products({ onAuthRequired }: ProductsProps) {
           </div>
         ) : sortedProducts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-slate-500 text-lg">No products found.</p>
+            <p className="text-slate-500 text-lg">Товары не найдены.</p>
             <button
               onClick={() => { setSearch(''); setSearchInput(''); setActiveCategory('all'); }}
               className="mt-4 text-cyan-600 hover:underline text-sm"
             >
-              Clear filters
+              Сбросить фильтры
             </button>
           </div>
         ) : (

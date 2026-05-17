@@ -106,8 +106,6 @@ export interface Order {
   order_items?: OrderItem[];
 }
 
-export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancelled';
-
 export interface OrderItem {
   id: string;
   order_id: string;
@@ -125,3 +123,34 @@ export type Page =
   | 'checkout'
   | 'orders'
   | 'order-detail';
+
+// Новый тип
+export interface LicenseKey {
+  id: string;
+  product_id: string;
+  key: string;
+  is_used: boolean;
+  order_id: string;
+  used_at: string | null;
+  created_at: string;
+}
+
+// Заменить OrderStatus — добавить 'paid'
+export type OrderStatus = 'pending' | 'paid' | 'cancelled';
+
+// Заменить весь интерфейс Order
+export interface Order {
+  id: string;
+  user_id: string;
+  status: OrderStatus;
+  subtotal: number;
+  processing_fee: number;
+  total: number;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  created_at: string;
+  updated_at: string;
+  order_items?: OrderItem[];
+  license_keys?: LicenseKey[];
+}

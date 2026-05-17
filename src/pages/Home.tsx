@@ -33,38 +33,32 @@ export default function Home({ onAuthRequired }: HomeProps) {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm font-semibold px-4 py-2 rounded-full mb-6">
               <Zap className="w-4 h-4" />
-              Instant Delivery Available — 2 to 4 Hours
+              Мгновенная доставка — 2–4 часа
             </div>
             <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight mb-6">
-              The Future of
+              Будущее
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                Electronics
+                Электроники
               </span>
             </h1>
             <p className="text-lg text-slate-400 mb-10 max-w-xl leading-relaxed">
-              Shop the latest smartphones, laptops, audio gear, and more — with industry-leading instant delivery right to your door.
+              Покупайте новейшие смартфоны, ноутбуки, аудиотехнику и многое другое — с мгновенной доставкой прямо до вашей двери.
             </p>
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => navigate('products')}
-                className="flex items-center gap-2 px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold rounded-xl transition-all hover:scale-105"
+                className="flex items-center gap-2 px-16 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold rounded-xl transition-all hover:scale-105"
               >
-                Shop Now
+                Перейти в магазин
                 <ArrowRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => navigate('products')}
-                className="flex items-center gap-2 px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl border border-white/10 transition-all"
-              >
-                Browse All Products
               </button>
             </div>
 
             <div className="flex flex-wrap gap-8 mt-14">
               {[
-                { icon: <Clock className="w-5 h-5 text-cyan-400" />, label: '2–4 hr delivery' },
-                { icon: <Shield className="w-5 h-5 text-cyan-400" />, label: '2-year warranty' },
-                { icon: <Star className="w-5 h-5 text-cyan-400" />, label: '50,000+ reviews' },
+                { icon: <Clock className="w-5 h-5 text-cyan-400" />, label: 'Доставка 2-4 часа' },
+                { icon: <Shield className="w-5 h-5 text-cyan-400" />, label: 'Гарантия 2 года' },
+                { icon: <Star className="w-5 h-5 text-cyan-400" />, label: '50,000+ отзывов' },
               ].map(item => (
                 <div key={item.label} className="flex items-center gap-2 text-slate-400 text-sm">
                   {item.icon}
@@ -79,12 +73,12 @@ export default function Home({ onAuthRequired }: HomeProps) {
       <section className="bg-white py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-black text-slate-900">Shop by Category</h2>
+            <h2 className="text-2xl font-black text-slate-900">Категории</h2>
             <button
               onClick={() => navigate('products')}
               className="flex items-center gap-1 text-cyan-600 hover:text-cyan-700 text-sm font-semibold transition-colors"
             >
-              View all <ChevronRight className="w-4 h-4" />
+              Показать все <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
@@ -114,15 +108,15 @@ export default function Home({ onAuthRequired }: HomeProps) {
                 <Zap className="w-8 h-8 text-slate-900" />
               </div>
               <div>
-                <h3 className="text-white text-xl font-black">Instant Delivery</h3>
-                <p className="text-slate-400 text-sm mt-0.5">Order before 6 PM and receive your item today, in just 2–4 hours.</p>
+                <h3 className="text-white text-xl font-black">Мгновенная доставка</h3>
+                <p className="text-slate-400 text-sm mt-0.5">Закажите до 18:00 и получите свой товар сегодня, всего за 2–4 часа.</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-6">
               {[
-                { step: '1', label: 'Place your order' },
-                { step: '2', label: 'We prepare it' },
-                { step: '3', label: 'Delivered in hours' },
+                { step: '1', label: 'Разместите' },
+                { step: '2', label: 'Мы приготовим' },
+                { step: '3', label: 'Доставка за пару часов' },
               ].map(item => (
                 <div key={item.step} className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-slate-900 font-bold text-sm">
@@ -136,7 +130,7 @@ export default function Home({ onAuthRequired }: HomeProps) {
               onClick={() => navigate('products')}
               className="flex-shrink-0 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold rounded-xl transition-all"
             >
-              Order Now
+              Заказать сейчас
             </button>
           </div>
         </div>
@@ -153,7 +147,7 @@ export default function Home({ onAuthRequired }: HomeProps) {
               onClick={() => navigate('products')}
               className="flex items-center gap-1 text-cyan-600 hover:text-cyan-700 text-sm font-semibold transition-colors"
             >
-              View all <ChevronRight className="w-4 h-4" />
+              Показать все <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           {loading ? (

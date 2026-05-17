@@ -37,20 +37,20 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
               onClick={() => navigate('home')}
               className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
             >
-              Home
+              Главная 
             </button>
             <button
               onClick={() => navigate('products')}
               className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
             >
-              Products
+              Товары
             </button>
             {user && (
               <button
                 onClick={() => navigate('orders')}
                 className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
               >
-                My Orders
+                Мои заказы
               </button>
             )}
           </nav>

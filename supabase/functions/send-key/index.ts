@@ -1,47 +1,26 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
-// CORS-заголовки, если будешь звать из браузера
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
 
-serve(async (req) => {
-  // 1. ОБЯЗАТЕЛЬНО handle OPTIONS
+serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders, status: 200 });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const rawBody = await req.text();
-    console.log('Raw body:', rawBody); // ← здесь будет видно, что приходит
-
-    if (!rawBody || rawBody.trim() === '') {
-      return new Response(
-        JSON.stringify({ error: 'Empty body' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    const body = await req.text()
+    if (!body.trim()) {
+      return new Response(JSON.stringify({ error: 'Empty body' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
-    let data: {
-      email: string;
-      customerName: string;
-      orderId: string;
-      keys: string[];
-    };
-
-    try {
-      data = JSON.parse(rawBody);
-    } catch (err) {
-      console.error('JSON parse error:', err);
-      return new Response(
-        JSON.stringify({ error: 'Invalid JSON' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const { email, customerName, orderId, keys } = data;
+    const { email, customerName, orderId, keys } = JSON.parse(body)
 
     // Send to Resend
     const res = await fetch('https://api.resend.com/emails', {
@@ -71,15 +50,14 @@ serve(async (req) => {
     const resendData = await res.json();
     console.log('Resend response:', JSON.stringify(resendData));
 
-    return new Response(
-      JSON.stringify({ success: true, resend: resendData }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  } catch (err: any) {
-    console.error('Error:', err);
-    return new Response(
-      JSON.stringify({ error: err.message ?? 'Unknown error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  } catch (err: unknown) {
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
-});
+})

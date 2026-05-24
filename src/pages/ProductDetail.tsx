@@ -1,5 +1,6 @@
 import { ArrowLeft, ShoppingCart, Star, Zap, Shield, RotateCcw, Plus, Minus } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigation } from '../context/NavigationContext';
 import { useProduct } from '../hooks/useProducts';
 import { useCart } from '../context/CartContext';
@@ -14,6 +15,7 @@ interface ProductDetailProps {
 }
 
 export default function ProductDetail({ productId, onAuthRequired }: ProductDetailProps) {
+  const { t } = useTranslation();
   const { navigate } = useNavigation();
   const { product, loading } = useProduct(productId);
   const { addToCart } = useCart();
@@ -56,9 +58,9 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
     return (
       <div className="min-h-screen bg-gray-50 pt-16 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-600 text-lg">Товар не найден.</p>
+          <p className="text-slate-600 text-lg">{t('product.notFound')}</p>
           <button onClick={() => navigate('products')} className="mt-4 text-cyan-600 hover:underline">
-            Назад к товарам
+            {t('product.backToProducts')}
           </button>
         </div>
       </div>
@@ -77,7 +79,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 text-sm font-medium mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Назад к товарам
+          {t('product.backToProducts')}
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -94,7 +96,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
           <div>
             {product.categories && (
               <span className="text-sm font-semibold text-cyan-600 uppercase tracking-wide">
-                {product.categories.name}
+                {t(`products.categories.${product.categories.slug}`, { defaultValue: product.categories.name })}
               </span>
             )}
             <h1 className="text-3xl font-black text-slate-900 mt-2 leading-tight">{product.name}</h1>
@@ -109,7 +111,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                 ))}
               </div>
               <span className="text-slate-600 text-sm font-medium">{product.rating}</span>
-              <span className="text-slate-400 text-sm">({product.review_count.toLocaleString()} отзывов)</span>
+              <span className="text-slate-400 text-sm">({product.review_count.toLocaleString()} {t('product.reviews')})</span>
             </div>
 
             <div className="flex items-center gap-3 mt-5">
@@ -118,7 +120,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                 <>
                   <span className="text-xl text-slate-400 line-through">${product.original_price.toFixed(2)}</span>
                   <span className="bg-rose-100 text-rose-600 text-sm font-bold px-2.5 py-1 rounded-lg">
-                    Скидка {discount}%
+                    {t('product.discount', { count: discount })}
                   </span>
                 </>
               )}
@@ -127,17 +129,17 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
             <div className="mt-5 p-4 bg-cyan-50 border border-cyan-200 rounded-xl">
               <div className="flex items-center gap-2 text-cyan-700 font-semibold text-sm">
                 <Zap className="w-4 h-4" />
-                Мгновенная выдача ключа
+                {t('product.instantKey')}
               </div>
               <p className="text-cyan-600 text-sm mt-1">
-                Ключ активации будет выдан <strong>сразу после оплаты</strong>.
+                {t('product.instantKeyDesc')}
               </p>
             </div>
 
             <p className="text-slate-600 mt-5 leading-relaxed text-sm">{product.description}</p>
 
             <div className="mt-6 flex items-center gap-4">
-              <span className="text-sm font-semibold text-slate-700">Количество</span>
+              <span className="text-sm font-semibold text-slate-700">{t('product.quantity')}</span>
               <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl p-1">
                 <button
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
@@ -165,22 +167,22 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                 }`}
               >
                 <ShoppingCart className="w-5 h-5" />
-                {added ? 'Добавлено!' : 'В корзину'}
+                {added ? t('product.added') : t('product.addToCart')}
               </button>
               <button
                 onClick={handleBuyNow}
                 className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold rounded-xl transition-all"
               >
                 <Zap className="w-5 h-5" />
-                Купить сейчас
+                {t('product.buyNow')}
               </button>
             </div>
 
             <div className="flex gap-4 mt-5">
               {[
-                { icon: <Zap className="w-4 h-4 text-cyan-500" />, text: 'Мгновенная выдача' },
-                { icon: <Shield className="w-4 h-4 text-green-500" />, text: 'Гарантия качества' },
-                { icon: <RotateCcw className="w-4 h-4 text-blue-500" />, text: 'Возврат за 30 дней' },
+                { icon: <Zap className="w-4 h-4 text-cyan-500" />, text: t('product.instantBadge') },
+                { icon: <Shield className="w-4 h-4 text-green-500" />, text: t('product.qualityGuarantee') },
+                { icon: <RotateCcw className="w-4 h-4 text-blue-500" />, text: t('product.returns') },
               ].map(item => (
                 <div key={item.text} className="flex items-center gap-1.5 text-xs text-slate-500">
                   {item.icon}
@@ -194,7 +196,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
         <div className="mt-16 max-w-2xl">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-black text-slate-900">
-              Отзывы
+              {t('product.reviewsTitle')}
               {reviews.length > 0 && (
                 <span className="ml-2 text-base font-semibold text-slate-400">
                   ({reviews.length})
@@ -208,7 +210,7 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
           <div className="mt-8">
             {user ? (
               <>
-                <h3 className="text-sm font-bold text-slate-900 mb-3">Оставить отзыв</h3>
+                <h3 className="text-sm font-bold text-slate-900 mb-3">{t('product.leaveReview')}</h3>
                 <ReviewForm onSubmit={addReview} />
               </>
             ) : (
@@ -217,9 +219,9 @@ export default function ProductDetail({ productId, onAuthRequired }: ProductDeta
                   onClick={onAuthRequired}
                   className="text-cyan-600 font-semibold hover:underline"
                 >
-                  Войдите
+                  {t('product.signInToReview')}
                 </button>
-                , чтобы оставить отзыв.
+                {t('product.signInToReviewSuffix')}
               </p>
             )}
           </div>

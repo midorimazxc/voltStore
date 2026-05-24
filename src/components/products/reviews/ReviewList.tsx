@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Review } from '../../../lib/types';
 import StarRating from './StarRating';
 
@@ -7,6 +8,8 @@ interface ReviewListProps {
 }
 
 export default function ReviewList({ reviews, loading }: ReviewListProps) {
+  const { t, i18n } = useTranslation();
+
   if (loading) {
     return (
       <div className="space-y-3">
@@ -29,16 +32,16 @@ export default function ReviewList({ reviews, loading }: ReviewListProps) {
 
   if (reviews.length === 0) {
     return (
-      <p className="text-sm text-slate-400 py-4">Отзывов пока нет. Будьте первым!</p>
+      <p className="text-sm text-slate-400 py-4">{t('reviews.noReviews')}</p>
     );
   }
 
   return (
     <div className="space-y-3">
       {reviews.map((review) => {
-        const name = review.profiles?.full_name || 'Пользователь';
-        const initials = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
-        const date = new Date(review.created_at).toLocaleDateString('ru-RU', {
+        const name = review.profiles?.full_name || t('reviews.anonymous');
+        const initials = name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
+        const date = new Date(review.created_at).toLocaleDateString(i18n.language === 'kz' ? 'kk-KZ' : i18n.language === 'en' ? 'en-US' : 'ru-RU', {
           day: 'numeric', month: 'long', year: 'numeric',
         });
 

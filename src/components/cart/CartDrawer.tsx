@@ -1,4 +1,5 @@
 import { X, ShoppingBag, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useCart } from '../../context/CartContext';
 import { useNavigation } from '../../context/NavigationContext';
 import CartItem from './CartItem';
@@ -9,6 +10,7 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ onClose, onAuthRequired }: CartDrawerProps) {
+  const { t } = useTranslation();
   const { items, totalPrice, totalItems } = useCart();
   const { navigate } = useNavigation();
 
@@ -24,7 +26,7 @@ export default function CartDrawer({ onClose, onAuthRequired }: CartDrawerProps)
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-slate-700" />
-            <h2 className="font-bold text-slate-900 text-lg">Корзина</h2>
+            <h2 className="font-bold text-slate-900 text-lg">{t('cart.title')}</h2>
             {totalItems > 0 && (
               <span className="bg-cyan-500 text-slate-900 text-xs font-bold px-2 py-0.5 rounded-full">
                 {totalItems}
@@ -42,14 +44,14 @@ export default function CartDrawer({ onClose, onAuthRequired }: CartDrawerProps)
               <ShoppingBag className="w-10 h-10 text-slate-300" />
             </div>
             <div className="text-center">
-              <p className="text-slate-700 font-semibold text-lg">Корзина пуста</p>
-              <p className="text-slate-400 text-sm mt-1">Добавьте товары чтобы начать</p>
+              <p className="text-slate-700 font-semibold text-lg">{t('cart.empty')}</p>
+              <p className="text-slate-400 text-sm mt-1">{t('cart.emptyDesc')}</p>
             </div>
             <button
               onClick={() => { onClose(); navigate('products'); }}
               className="px-6 py-3 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-colors"
             >
-              Перейти в каталог
+              {t('cart.goToCatalog')}
             </button>
           </div>
         ) : (
@@ -63,15 +65,15 @@ export default function CartDrawer({ onClose, onAuthRequired }: CartDrawerProps)
             <div className="border-t border-slate-100 px-5 py-5 space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm text-slate-600">
-                  <span>Подытог ({totalItems} шт.)</span>
+                  <span>{t('cart.subtotal')} ({totalItems} шт.)</span>
                   <span className="font-semibold">${totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-slate-400">
-                  <span>Комиссия</span>
-                  <span>Бесплатно</span>
+                  <span>{t('cart.fee')}</span>
+                  <span>{t('cart.free')}</span>
                 </div>
                 <div className="flex justify-between font-bold text-slate-900 text-base pt-2 border-t border-slate-100">
-                  <span>Итого</span>
+                  <span>{t('cart.total')}</span>
                   <span>${totalPrice.toFixed(2)}</span>
                 </div>
               </div>
@@ -80,7 +82,7 @@ export default function CartDrawer({ onClose, onAuthRequired }: CartDrawerProps)
                 onClick={handleCheckout}
                 className="w-full flex items-center justify-center gap-2 py-4 bg-slate-900 hover:bg-cyan-600 text-white font-bold rounded-xl transition-colors"
               >
-                Оформить заказ
+                {t('cart.checkout')}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

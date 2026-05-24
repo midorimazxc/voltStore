@@ -1,4 +1,5 @@
 import { Minus, Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { CartItem as CartItemType } from '../../lib/types';
 import { useCart } from '../../context/CartContext';
 
@@ -7,6 +8,7 @@ interface CartItemProps {
 }
 
 export default function CartItem({ item }: CartItemProps) {
+  const { t } = useTranslation();
   const { updateQuantity, removeFromCart } = useCart();
 
   return (
@@ -20,7 +22,7 @@ export default function CartItem({ item }: CartItemProps) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-slate-900 text-sm font-semibold leading-tight line-clamp-2">{item.product.name}</p>
-        <p className="text-slate-500 text-xs mt-0.5">${item.product.price.toFixed(2)} each</p>
+        <p className="text-slate-500 text-xs mt-0.5">${item.product.price.toFixed(2)} {t('cart.each')}</p>
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg p-0.5">
             <button

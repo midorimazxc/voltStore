@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { ShoppingCart, Zap, Menu, X, Package, LogOut, User, Search } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigation } from '../../context/NavigationContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface HeaderProps {
   onCartOpen: () => void;
@@ -10,6 +12,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
+  const { t } = useTranslation();
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
@@ -37,25 +40,27 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
               onClick={() => navigate('home')}
               className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
             >
-              Главная 
+              {t('nav.home')}
             </button>
             <button
               onClick={() => navigate('products')}
               className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
             >
-              Товары
+              {t('nav.products')}
             </button>
             {user && (
               <button
                 onClick={() => navigate('orders')}
                 className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
               >
-                Мои заказы
+                {t('nav.myOrders')}
               </button>
             )}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+
             <button
               onClick={() => navigate('products')}
               className="hidden sm:flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
@@ -95,14 +100,14 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
                       className="flex items-center gap-3 w-full px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
                     >
                       <Package className="w-4 h-4" />
-                      My Orders
+                      {t('nav.myOrders')}
                     </button>
                     <button
                       onClick={() => { signOut(); setUserMenuOpen(false); }}
                       className="flex items-center gap-3 w-full px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors border-t border-slate-700"
                     >
                       <LogOut className="w-4 h-4" />
-                      Sign Out
+                      {t('auth.signOut')}
                     </button>
                   </div>
                 )}
@@ -112,7 +117,7 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
                 onClick={onAuthOpen}
                 className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-900 text-sm font-semibold rounded-lg transition-colors"
               >
-                Sign In
+                {t('auth.signIn')}
               </button>
             )}
 
@@ -132,20 +137,20 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
             onClick={() => { navigate('home'); setMenuOpen(false); }}
             className="block w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition-colors"
           >
-            Home
+            {t('nav.home')}
           </button>
           <button
             onClick={() => { navigate('products'); setMenuOpen(false); }}
             className="block w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition-colors"
           >
-            Products
+            {t('nav.products')}
           </button>
           {user && (
             <button
               onClick={() => { navigate('orders'); setMenuOpen(false); }}
               className="block w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition-colors"
             >
-              My Orders
+              {t('nav.myOrders')}
             </button>
           )}
         </div>

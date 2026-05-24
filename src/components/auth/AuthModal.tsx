@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 
 interface AuthModalProps {
@@ -7,12 +8,12 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ onClose }: AuthModalProps) {
+  const { t } = useTranslation();
   const { signIn, signUp } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
   const [form, setForm] = useState({ email: '', password: '', fullName: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,7 +25,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
       if (error) setError(error);
       else onClose();
     } else {
-      if (!form.fullName.trim()) { setError('Full name is required'); setLoading(false); return; }
+      if (!form.fullName.trim()) { setError(t('auth.nameRequired')); setLoading(false); return; }
       const { error } = await signUp(form.email, form.password, form.fullName);
       if (error) setError(error);
       else onClose();
@@ -49,24 +50,24 @@ export default function AuthModal({ onClose }: AuthModalProps) {
             </button>
           </div>
           <h2 className="text-white text-2xl font-black mt-4">
-            {mode === 'signin' ? 'Welcome back' : 'Create account'}
+            {mode === 'signin' ? t('auth.welcomeBack') : t('auth.joinUs')}
           </h2>
           <p className="text-slate-400 text-sm mt-1">
-            {mode === 'signin' ? 'Sign in to continue shopping' : 'Join us for fast electronics delivery'}
+            {mode === 'signin' ? t('auth.continueShoping') : t('auth.joinDesc')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-6 space-y-4">
           {mode === 'signup' && (
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Full Name</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('auth.fullName')}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="text"
                   value={form.fullName}
                   onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
-                  placeholder="John Smith"
+                  placeholder={t('auth.namePlaceholder')}
                   required
                   className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-cyan-500 transition-colors"
                 />
@@ -75,7 +76,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Email</label>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('auth.email')}</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -90,14 +91,14 @@ export default function AuthModal({ onClose }: AuthModalProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Password</label>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('auth.password')}</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                placeholder="Min. 6 characters"
+                placeholder={t('auth.passwordPlaceholder')}
                 required
                 minLength={6}
                 className="w-full pl-10 pr-10 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-cyan-500 transition-colors"
@@ -123,17 +124,17 @@ export default function AuthModal({ onClose }: AuthModalProps) {
             disabled={loading}
             className="w-full py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold rounded-xl transition-colors"
           >
-            {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+            {loading ? t('auth.pleaseWait') : mode === 'signin' ? t('auth.signIn') : t('auth.createAccount')}
           </button>
 
           <p className="text-center text-sm text-slate-500">
-            {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
+            {mode === 'signin' ? t('auth.noAccount') : t('auth.haveAccount')}{' '}
             <button
               type="button"
               onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); }}
               className="text-cyan-600 font-semibold hover:underline"
             >
-              {mode === 'signin' ? 'Sign up' : 'Sign in'}
+              {mode === 'signin' ? t('auth.signUp') : t('auth.signIn')}
             </button>
           </p>
         </form>

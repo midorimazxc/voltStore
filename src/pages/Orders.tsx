@@ -1,30 +1,52 @@
 import { ArrowLeft, Package, Zap, Truck, Clock, CheckCircle2, XCircle, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigation } from '../context/NavigationContext';
 import { useOrders } from '../hooks/useOrders';
 import { Order, OrderStatus, DeliveryType } from '../lib/types';
 
-const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; icon: React.ReactNode }> = {
-  pending: { label: 'Pending', color: 'bg-amber-100 text-amber-700', icon: <Clock className="w-3.5 h-3.5" /> },
-  confirmed: { label: 'Confirmed', color: 'bg-blue-100 text-blue-700', icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-  preparing: { label: 'Preparing', color: 'bg-violet-100 text-violet-700', icon: <Package className="w-3.5 h-3.5" /> },
-  out_for_delivery: { label: 'Out for Delivery', color: 'bg-cyan-100 text-cyan-700', icon: <Truck className="w-3.5 h-3.5" /> },
-  delivered: { label: 'Delivered', color: 'bg-green-100 text-green-700', icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-  cancelled: { label: 'Cancelled', color: 'bg-rose-100 text-rose-700', icon: <XCircle className="w-3.5 h-3.5" /> },
-};
+function useStatusConfig() {
+  const { t } = useTranslation();
+  const STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; icon: React.ReactNode }> = {
+    pending:          { label: t('orders.status.pending'),          color: 'bg-amber-100 text-amber-700',   icon: <Clock className="w-3.5 h-3.5" /> },
+    confirmed:        { label: t('orders.status.confirmed'),        color: 'bg-blue-100 text-blue-700',     icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+    preparing:        { label: t('orders.status.preparing'),        color: 'bg-violet-100 text-violet-700', icon: <Package className="w-3.5 h-3.5" /> },
+    out_for_delivery: { label: t('orders.status.out_for_delivery'), color: 'bg-cyan-100 text-cyan-700',    icon: <Truck className="w-3.5 h-3.5" /> },
+    delivered:        { label: t('orders.status.delivered'),        color: 'bg-green-100 text-green-700',  icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+    cancelled:        { label: t('orders.status.cancelled'),        color: 'bg-rose-100 text-rose-700',    icon: <XCircle className="w-3.5 h-3.5" /> },
+  };
+  return STATUS_CONFIG;
+}
 
-const DELIVERY_LABELS: Record<DeliveryType, { label: string; icon: React.ReactNode }> = {
-  instant: { label: 'Instant Delivery', icon: <Zap className="w-3.5 h-3.5 text-cyan-500" /> },
-  express: { label: 'Express Delivery', icon: <Truck className="w-3.5 h-3.5 text-blue-500" /> },
-  standard: { label: 'Standard Delivery', icon: <Package className="w-3.5 h-3.5 text-slate-500" /> },
-};
+function useDeliveryLabels() {
+  const { t } = useTranslation();
+  const DELIVERY_LABELS: Record<DeliveryType, { label: string; icon: React.ReactNode }> = {
+    instant:  { label: t('orders.delivery.instant'),  icon: <Zap className="w-3.5 h-3.5 text-cyan-500" /> },
+    express:  { label: t('orders.delivery.express'),  icon: <Truck className="w-3.5 h-3.5 text-blue-500" /> },
+    standard: { label: t('orders.delivery.standard'), icon: <Package className="w-3.5 h-3.5 text-slate-500" /> },
+  };
+  return DELIVERY_LABELS;
+}
+
+function itemsLabel(count: number, t: (key: string) => string): string {
+  // Простая плюрализация для RU/KZ/EN
+  if (count === 1) return `1 ${t('orders.item')}`;
+  if (count >= 2 && count <= 4) return `${count} ${t('orders.items_2_4')}`;
+  return `${count} ${t('orders.items_other')}`;
+}
 
 function OrderCard({ order }: { order: Order }) {
+  const { t, i18n } = useTranslation();
   const { navigate } = useNavigation();
+  const STATUS_CONFIG = useStatusConfig();
+  const DELIVERY_LABELS = useDeliveryLabels();
+
   const status = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.pending;
   const delivery = DELIVERY_LABELS[order.delivery_type] ?? DELIVERY_LABELS.standard;
 
+  const locale = i18n.language === 'kz' ? 'ru-RU' : i18n.language === 'ru' ? 'ru-RU' : 'en-US';
+
   const eta = order.estimated_delivery
-    ? new Date(order.estimated_delivery).toLocaleString('en-US', {
+    ? new Date(order.estimated_delivery).toLocaleString(locale, {
         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
       })
     : null;
@@ -36,9 +58,9 @@ function OrderCard({ order }: { order: Order }) {
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs text-slate-400 font-medium">Order #{order.id.slice(0, 8).toUpperCase()}</p>
+          <p className="text-xs text-slate-400 font-medium">{t('orders.order')} #{order.id.slice(0, 8).toUpperCase()}</p>
           <p className="text-slate-900 font-bold mt-0.5">
-            {new Date(order.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            {new Date(order.created_at).toLocaleDateString(locale, { month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -56,7 +78,7 @@ function OrderCard({ order }: { order: Order }) {
           <span className="font-medium">{delivery.label}</span>
         </div>
         {eta && (
-          <span className="text-xs text-slate-400">· ETA {eta}</span>
+          <span className="text-xs text-slate-400">· {t('orders.eta')} {eta}</span>
         )}
       </div>
 
@@ -77,7 +99,7 @@ function OrderCard({ order }: { order: Order }) {
 
       <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
         <span className="text-xs text-slate-400">
-          {order.order_items?.length ?? 0} item{(order.order_items?.length ?? 0) !== 1 ? 's' : ''}
+          {itemsLabel(order.order_items?.length ?? 0, t)}
         </span>
         <span className="text-slate-900 font-black">${order.total.toFixed(2)}</span>
       </div>
@@ -86,6 +108,7 @@ function OrderCard({ order }: { order: Order }) {
 }
 
 export default function Orders() {
+  const { t } = useTranslation();
   const { navigate } = useNavigation();
   const { orders, loading } = useOrders();
 
@@ -98,10 +121,10 @@ export default function Orders() {
             className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-medium mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Home
+            {t('orders.backToHome')}
           </button>
-          <h1 className="text-3xl font-black text-white">My Orders</h1>
-          <p className="text-slate-400 text-sm mt-1">Track your purchases and delivery status</p>
+          <h1 className="text-3xl font-black text-white">{t('orders.title')}</h1>
+          <p className="text-slate-400 text-sm mt-1">{t('orders.subtitle')}</p>
         </div>
       </div>
 
@@ -117,13 +140,13 @@ export default function Orders() {
             <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
               <Package className="w-10 h-10 text-slate-300" />
             </div>
-            <h3 className="text-slate-700 font-bold text-xl mb-2">No orders yet</h3>
-            <p className="text-slate-400 text-sm mb-6">Your orders will appear here once you make a purchase.</p>
+            <h3 className="text-slate-700 font-bold text-xl mb-2">{t('orders.noOrders')}</h3>
+            <p className="text-slate-400 text-sm mb-6">{t('orders.noOrdersDesc')}</p>
             <button
               onClick={() => navigate('products')}
               className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors"
             >
-              Start Shopping
+              {t('orders.startShopping')}
             </button>
           </div>
         ) : (

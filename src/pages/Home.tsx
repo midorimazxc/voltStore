@@ -1,4 +1,5 @@
 import { ArrowRight, Zap, KeyRound, Shield, Star, ChevronRight, Gamepad2, Monitor, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigation } from '../context/NavigationContext';
 import { useFeaturedProducts, useCategories } from '../hooks/useProducts';
 import ProductCard from '../components/products/ProductCard';
@@ -14,6 +15,7 @@ interface HomeProps {
 }
 
 export default function Home({ onAuthRequired }: HomeProps) {
+  const { t } = useTranslation();
   const { navigate } = useNavigation();
   const { products, loading } = useFeaturedProducts();
   const { categories } = useCategories();
@@ -22,20 +24,16 @@ export default function Home({ onAuthRequired }: HomeProps) {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden pt-16">
-        {/* Фоновое изображение — замени src на свою картинку */}
         <div className="absolute inset-0">
           <img
             src="/products/background.jpg"
             alt=""
             className="w-full h-full object-cover object-center"
           />
-          {/* Затемнение поверх картинки */}
           <div className="absolute inset-0 bg-slate-900/75" />
-          {/* Градиент снизу для плавного перехода */}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
         </div>
 
-        {/* Декоративные блики */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
@@ -45,32 +43,32 @@ export default function Home({ onAuthRequired }: HomeProps) {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm font-semibold px-4 py-2 rounded-full mb-6">
               <Zap className="w-4 h-4" />
-              Мгновенная выдача ключей
+              {t('home.badge')}
             </div>
             <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight mb-6">
-              Цифровые товары
+              {t('home.heroTitle')}
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                Мгновенно
+                {t('home.heroTitleAccent')}
               </span>
             </h1>
             <p className="text-lg text-slate-300 mb-10 max-w-xl leading-relaxed">
-              Игры, программы, антивирусы — ключи активации сразу после оплаты. Никаких ожиданий.
+              {t('home.heroDesc')}
             </p>
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => navigate('products')}
                 className="flex items-center gap-2 px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold rounded-xl transition-all hover:scale-105"
               >
-                Перейти в магазин
+                {t('home.goToShop')}
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>
 
             <div className="flex flex-wrap gap-8 mt-14">
               {[
-                { icon: <KeyRound className="w-5 h-5 text-cyan-400" />, label: 'Ключ сразу после оплаты' },
-                { icon: <Shield className="w-5 h-5 text-cyan-400" />, label: 'Гарантия подлинности' },
-                { icon: <Star className="w-5 h-5 text-cyan-400" />, label: '50,000+ довольных клиентов' },
+                { icon: <KeyRound className="w-5 h-5 text-cyan-400" />, label: t('home.keyAfterPayment') },
+                { icon: <Shield className="w-5 h-5 text-cyan-400" />, label: t('home.guarantee') },
+                { icon: <Star className="w-5 h-5 text-cyan-400" />, label: t('home.happyClients') },
               ].map(item => (
                 <div key={item.label} className="flex items-center gap-2 text-slate-300 text-sm">
                   {item.icon}
@@ -82,16 +80,16 @@ export default function Home({ onAuthRequired }: HomeProps) {
         </div>
       </section>
 
-      {/* Категории */}
+      {/* Categories */}
       <section className="bg-white py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-black text-slate-900">Категории</h2>
+            <h2 className="text-2xl font-black text-slate-900">{t('home.categories')}</h2>
             <button
               onClick={() => navigate('products')}
               className="flex items-center gap-1 text-cyan-600 hover:text-cyan-700 text-sm font-semibold transition-colors"
             >
-              Все товары <ChevronRight className="w-4 h-4" />
+              {t('home.allProducts')} <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -113,7 +111,7 @@ export default function Home({ onAuthRequired }: HomeProps) {
         </div>
       </section>
 
-      {/* Баннер — как это работает */}
+      {/* How it works banner */}
       <section className="bg-gradient-to-r from-slate-900 to-slate-800 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -122,23 +120,17 @@ export default function Home({ onAuthRequired }: HomeProps) {
                 <KeyRound className="w-7 h-7 text-slate-900" />
               </div>
               <div>
-                <h3 className="text-white text-xl font-black">Как это работает?</h3>
-                <p className="text-slate-400 text-sm mt-0.5">
-                  Выбери товар, оплати — и получи ключ мгновенно.
-                </p>
+                <h3 className="text-white text-xl font-black">{t('home.howItWorks')}</h3>
+                <p className="text-slate-400 text-sm mt-0.5">{t('home.howItWorksDesc')}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-6">
-              {[
-                { step: '1', label: 'Выбери товар' },
-                { step: '2', label: 'Оплати заказ' },
-                { step: '3', label: 'Получи ключ' },
-              ].map(item => (
-                <div key={item.step} className="flex items-center gap-3">
+              {(['1', '2', '3'] as const).map(step => (
+                <div key={step} className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-slate-900 font-bold text-sm flex-shrink-0">
-                    {item.step}
+                    {step}
                   </div>
-                  <span className="text-slate-300 text-sm font-medium">{item.label}</span>
+                  <span className="text-slate-300 text-sm font-medium">{t(`home.steps.${step}`)}</span>
                 </div>
               ))}
             </div>
@@ -146,25 +138,25 @@ export default function Home({ onAuthRequired }: HomeProps) {
               onClick={() => navigate('products')}
               className="flex-shrink-0 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold rounded-xl transition-all"
             >
-              Попробовать
+              {t('home.tryNow')}
             </button>
           </div>
         </div>
       </section>
 
-      {/* Популярные товары */}
+      {/* Popular products */}
       <section className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <div>
-              <h2 className="text-3xl font-black text-slate-900">Популярные товары</h2>
-              <p className="text-slate-500 mt-1">Лучшие предложения — ключ сразу после оплаты</p>
+              <h2 className="text-3xl font-black text-slate-900">{t('home.popular')}</h2>
+              <p className="text-slate-500 mt-1">{t('home.popularDesc')}</p>
             </div>
             <button
               onClick={() => navigate('products')}
               className="flex items-center gap-1 text-cyan-600 hover:text-cyan-700 text-sm font-semibold transition-colors"
             >
-              Показать все <ChevronRight className="w-4 h-4" />
+              {t('home.showAll')} <ChevronRight className="w-4 h-4" />
             </button>
           </div>
           {loading ? (

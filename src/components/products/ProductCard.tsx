@@ -1,4 +1,5 @@
 import { Star, ShoppingCart, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Product } from '../../lib/types';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -10,6 +11,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onAuthRequired }: ProductCardProps) {
+  const { t } = useTranslation();
   const { addToCart } = useCart();
   const { user } = useAuth();
   const { navigate } = useNavigation();
@@ -38,7 +40,7 @@ export default function ProductCard({ product, onAuthRequired }: ProductCardProp
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           <span className="flex items-center gap-1 bg-cyan-500 text-slate-900 text-xs font-bold px-2 py-1 rounded-full">
             <Zap className="w-3 h-3" />
-            Моментальная доставка
+            {t('product.instantDelivery')}
           </span>
           {discount && (
             <span className="bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -49,7 +51,7 @@ export default function ProductCard({ product, onAuthRequired }: ProductCardProp
         {product.stock <= 5 && product.stock > 0 && (
           <div className="absolute bottom-3 left-3">
             <span className="bg-amber-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-              Only {product.stock} left
+              {t('product.onlyLeft', { count: product.stock })}
             </span>
           </div>
         )}
@@ -58,7 +60,7 @@ export default function ProductCard({ product, onAuthRequired }: ProductCardProp
       <div className="p-4">
         {product.categories && (
           <span className="text-xs font-medium text-cyan-600 uppercase tracking-wide">
-            {product.categories.name}
+            {t(`products.categories.${product.categories.slug}`, { defaultValue: product.categories.name })}
           </span>
         )}
         <h3 className="text-slate-900 font-semibold mt-1 text-sm leading-tight line-clamp-2 group-hover:text-cyan-700 transition-colors">
@@ -89,7 +91,7 @@ export default function ProductCard({ product, onAuthRequired }: ProductCardProp
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-cyan-600 text-white text-xs font-semibold rounded-lg transition-colors"
           >
             <ShoppingCart className="w-3.5 h-3.5" />
-            Add
+            {t('product.add')}
           </button>
         </div>
       </div>

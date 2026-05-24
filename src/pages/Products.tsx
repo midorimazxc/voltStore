@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useProducts, useCategories } from '../hooks/useProducts';
 import ProductCard from '../components/products/ProductCard';
 import { Smartphone, Laptop, Headphones, Tablet, Watch, Gamepad2 } from 'lucide-react';
+import { useNavigation } from '../context/NavigationContext';
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   smartphone: <Smartphone className="w-4 h-4" />,
@@ -17,20 +19,25 @@ interface ProductsProps {
   onAuthRequired: () => void;
 }
 
-const SORT_OPTIONS = [
-  { value: 'featured', label: 'Популярные' },
-  { value: 'price-asc', label: 'Цена: по возрастанию' },
-  { value: 'price-desc', label: 'Цена: по убыванию' },
-  { value: 'rating', label: 'По рейтингу' },
-];
-
 export default function Products({ onAuthRequired }: ProductsProps) {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const { t } = useTranslation();
+  const { nav } = useNavigation();
+  const [activeCategory, setActiveCategory] = useState(nav.categoryId ?? 'all');
+  useEffect(() => {
+    setActiveCategory(nav.categoryId ?? 'all');
+  }, [nav.categoryId]);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [sort, setSort] = useState('featured');
   const { categories } = useCategories();
   const { products, loading } = useProducts(activeCategory, search);
+
+  const SORT_OPTIONS = [
+    { value: 'featured', label: t('products.sortFeatured') },
+    { value: 'price-asc', label: t('products.sortPriceAsc') },
+    { value: 'price-desc', label: t('products.sortPriceDesc') },
+    { value: 'rating', label: t('products.sortRating') },
+  ];
 
   const sortedProducts = [...products].sort((a, b) => {
     if (sort === 'price-asc') return a.price - b.price;
@@ -48,7 +55,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
     <div className="min-h-screen bg-gray-50 pt-16">
       <div className="bg-slate-900 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-black text-white mb-6">Все товары</h1>
+          <h1 className="text-3xl font-black text-white mb-6">{t('products.title')}</h1>
           <form onSubmit={handleSearch} className="flex gap-3 max-w-xl">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -56,7 +63,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
                 type="text"
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                placeholder="Поиск товаров..."
+                placeholder={t('products.search')}
                 className="w-full pl-10 pr-4 py-3 bg-slate-800 border border-slate-700 text-white placeholder-slate-400 rounded-xl focus:outline-none focus:border-cyan-500 transition-colors text-sm"
               />
               {searchInput && (
@@ -73,7 +80,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
               type="submit"
               className="px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded-xl transition-colors text-sm"
             >
-              Найти
+              {t('products.find')}
             </button>
           </form>
         </div>
@@ -90,7 +97,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
                   : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
               }`}
             >
-              Все
+              {t('products.all')}
             </button>
             {categories.map(cat => (
               <button
@@ -103,7 +110,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
                 }`}
               >
                 {CATEGORY_ICONS[cat.icon]}
-                {cat.name}
+                {t(`products.categories.${cat.slug}`, { defaultValue: cat.name })}
               </button>
             ))}
           </div>
@@ -123,7 +130,7 @@ export default function Products({ onAuthRequired }: ProductsProps) {
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-slate-500">
-            {loading ? 'Загрузка...' : `Найдено товаров: ${sortedProducts.length}`}
+            {loading ? t('products.loading') : t('products.found', { count: sortedProducts.length })}
           </p>
         </div>
 
@@ -135,12 +142,12 @@ export default function Products({ onAuthRequired }: ProductsProps) {
           </div>
         ) : sortedProducts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-slate-500 text-lg">Товары не найдены.</p>
+            <p className="text-slate-500 text-lg">{t('products.notFound')}</p>
             <button
               onClick={() => { setSearch(''); setSearchInput(''); setActiveCategory('all'); }}
               className="mt-4 text-cyan-600 hover:underline text-sm"
             >
-              Сбросить фильтры
+              {t('products.resetFilters')}
             </button>
           </div>
         ) : (

@@ -1,17 +1,46 @@
 import { Zap, Truck, Shield, Headphones, RotateCcw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigation } from '../../context/NavigationContext';
+
 export default function Footer() {
+  const { t } = useTranslation();
   const { navigate } = useNavigation();
+
+  const features = [
+    { icon: <Truck className="w-5 h-5 text-cyan-400" />, title: t('footer.fastDelivery'), desc: t('footer.fastDeliveryDesc') },
+    { icon: <Shield className="w-5 h-5 text-cyan-400" />, title: t('footer.guarantee'), desc: t('footer.guaranteeDesc') },
+    { icon: <RotateCcw className="w-5 h-5 text-cyan-400" />, title: t('footer.returns'), desc: t('footer.returnsDesc') },
+    { icon: <Headphones className="w-5 h-5 text-cyan-400" />, title: t('footer.support'), desc: t('footer.supportDesc') },
+  ];
+
+  const catalogItems = [
+    { label: t('footer.categories.games'),    slug: 'games' },
+    { label: t('footer.categories.software'), slug: 'software' },
+    { label: t('footer.categories.antivirus'), slug: 'antivirus' },
+  ];
+
+  const supportItems = [
+    t('footer.supportItems.contact'),
+    t('footer.supportItems.faq'),
+    t('footer.supportItems.delivery'),
+    t('footer.supportItems.track'),
+    t('footer.supportItems.returns'),
+    t('footer.supportItems.warranty'),
+  ];
+
+  const companyItems = [
+    t('footer.companyItems.about'),
+    t('footer.companyItems.careers'),
+    t('footer.companyItems.press'),
+    t('footer.companyItems.privacy'),
+    t('footer.companyItems.terms'),
+  ];
+
   return (
     <footer className="bg-slate-900 border-t border-slate-800 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-10 border-b border-slate-800">
-          {[
-            { icon: <Truck className="w-5 h-5 text-cyan-400" />, title: 'Быстрая доставка', desc: 'Получите заказ за 2–4 часа' },
-            { icon: <Shield className="w-5 h-5 text-cyan-400" />, title: 'Гарантия 2 года', desc: 'На все товары' },
-            { icon: <RotateCcw className="w-5 h-5 text-cyan-400" />, title: 'Возврат за 30 дней', desc: 'Без лишних вопросов' },
-            { icon: <Headphones className="w-5 h-5 text-cyan-400" />, title: 'Поддержка 24/7', desc: 'Помощь в любое время' },
-          ].map(item => (
+          {features.map(item => (
             <div key={item.title} className="flex items-start gap-3">
               <div className="flex-shrink-0 w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center">
                 {item.icon}
@@ -23,6 +52,7 @@ export default function Footer() {
             </div>
           ))}
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-10 border-b border-slate-800">
           <div className="md:col-span-1">
             <button onClick={() => navigate('home')} className="flex items-center gap-2 mb-4">
@@ -31,39 +61,40 @@ export default function Footer() {
               </div>
               <span className="text-white font-bold text-lg">Volt<span className="text-cyan-400">Store</span></span>
             </button>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Лучшее место для покупки новейшей электроники с молниеносной доставкой до двери.
-            </p>
+            <p className="text-slate-400 text-sm leading-relaxed">{t('footer.description')}</p>
           </div>
+
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm">Каталог</h4>
+            <h4 className="text-white font-semibold mb-4 text-sm">{t('footer.catalog')}</h4>
             <ul className="space-y-2">
-              {['Смартфоны', 'Ноутбуки', 'Аудио', 'Планшеты', 'Носимые устройства', 'Игры'].map(cat => (
-                <li key={cat}>
+              {catalogItems.map(cat => (
+                <li key={cat.slug}>
                   <button
-                    onClick={() => navigate('products')}
+                    onClick={() => navigate('products', { categoryId: cat.slug })}
                     className="text-slate-400 hover:text-cyan-400 text-sm transition-colors"
                   >
-                    {cat}
+                    {cat.label}
                   </button>
                 </li>
               ))}
             </ul>
           </div>
+
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm">Поддержка</h4>
+            <h4 className="text-white font-semibold mb-4 text-sm">{t('footer.supportLinks')}</h4>
             <ul className="space-y-2">
-              {['Связаться с нами', 'Частые вопросы', 'Доставка', 'Отследить заказ', 'Возврат', 'Гарантия'].map(item => (
+              {supportItems.map(item => (
                 <li key={item}>
                   <span className="text-slate-400 text-sm">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
+
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm">Компания</h4>
+            <h4 className="text-white font-semibold mb-4 text-sm">{t('footer.company')}</h4>
             <ul className="space-y-2">
-              {['О нас', 'Вакансии', 'Пресса', 'Политика конфиденциальности', 'Условия использования'].map(item => (
+              {companyItems.map(item => (
                 <li key={item}>
                   <span className="text-slate-400 text-sm">{item}</span>
                 </li>
@@ -71,11 +102,12 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-sm">
-            &copy; {new Date().getFullYear()} VoltStore. Все права защищены.
+            &copy; {new Date().getFullYear()} VoltStore. {t('footer.rights')}
           </p>
-          <p className="text-slate-600 text-xs">Создано с любовью для ценителей электроники.</p>
+          <p className="text-slate-600 text-xs">{t('footer.madeWith')}</p>
         </div>
       </div>
     </footer>

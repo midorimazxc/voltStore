@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingCart, Zap, Menu, X, Package, LogOut, User, Search } from 'lucide-react';
+import { ShoppingCart, Zap, Menu, X, Package, LogOut, User, Search, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -9,9 +9,11 @@ import LanguageSwitcher from './LanguageSwitcher';
 interface HeaderProps {
   onCartOpen: () => void;
   onAuthOpen: () => void;
+  isAdmin?: boolean;
+  onAdminOpen?: () => void;
 }
 
-export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
+export default function Header({ onCartOpen, onAuthOpen, isAdmin, onAdminOpen }: HeaderProps) {
   const { t } = useTranslation();
   const { totalItems } = useCart();
   const { user, signOut } = useAuth();
@@ -56,6 +58,15 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
                 {t('nav.myOrders')}
               </button>
             )}
+            {isAdmin && (
+              <button
+                onClick={onAdminOpen}
+                className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
+              >
+                <Shield className="w-4 h-4" />
+                Админка
+              </button>
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -95,6 +106,15 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
                 </button>
                 {userMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden">
+                    {isAdmin && (
+                      <button
+                        onClick={() => { onAdminOpen?.(); setUserMenuOpen(false); }}
+                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-cyan-400 hover:bg-slate-700 transition-colors border-b border-slate-700"
+                      >
+                        <Shield className="w-4 h-4" />
+                        Админка
+                      </button>
+                    )}
                     <button
                       onClick={() => { navigate('orders'); setUserMenuOpen(false); }}
                       className="flex items-center gap-3 w-full px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
@@ -151,6 +171,15 @@ export default function Header({ onCartOpen, onAuthOpen }: HeaderProps) {
               className="block w-full text-left px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition-colors"
             >
               {t('nav.myOrders')}
+            </button>
+          )}
+          {isAdmin && (
+            <button
+              onClick={() => { onAdminOpen?.(); setMenuOpen(false); }}
+              className="flex items-center gap-2 w-full text-left px-3 py-2 text-cyan-400 hover:bg-slate-800 rounded-lg text-sm font-medium transition-colors"
+            >
+              <Shield className="w-4 h-4" />
+              Админка
             </button>
           )}
         </div>
